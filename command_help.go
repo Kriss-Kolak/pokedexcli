@@ -6,7 +6,9 @@ func commandHelp() error {
 	fmt.Println("Welcome to the Pokedex!")
 	fmt.Println("Usage:")
 	fmt.Println()
-	fmt.Println("help: Displays a help message")
-	fmt.Println("exit: Exit the Pokedex")
+
+	for _, value := range getCommands() {
+		fmt.Printf("%s: %s\n", value.name, value.description)
+	}
 	return nil
 }
