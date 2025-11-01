@@ -28,7 +28,7 @@ func commandMap(config *Config) error {
 		return err
 	}
 
-	var location Location
+	var location pokeapi.Location
 	if err := json.Unmarshal(body, &location); err != nil {
 		return err
 	}
