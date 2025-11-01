@@ -5,19 +5,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"github.com/Kriss-Kolak/pokedexcli/internal/pokeapi"
 )
-
-type Location struct {
-	Count    int
-	Next     string
-	Previous string
-	Results  []Results
-}
-
-type Results struct {
-	Name string
-	Url  string
-}
 
 func commandMap(config *Config) error {
 	var url string
