@@ -17,10 +17,15 @@ func cleanInput(text string) []string {
 	return splited
 }
 
+type Config struct {
+	Next     string
+	Previous string
+}
+
 type cliCommand struct {
 	name        string
 	description string
-	callback    func() error
+	callback    func(*Config) error
 }
 
 func getCommands() map[string]cliCommand {
@@ -35,9 +40,23 @@ func getCommands() map[string]cliCommand {
 			description: "Displays a help message",
 			callback:    commandHelp,
 		},
+		"map": {
+			name:        "map",
+			description: "Display next 20 locations",
+			callback:    commandMap,
+		},
+		"mapb": {
+			name:        "mapb",
+			description: "Display previous 20 locations",
+			callback:    commandMapb,
+		},
 	}
 }
 func repl() {
+	config := Config{
+		Next:     "",
+		Previous: "",
+	}
 	s := bufio.NewScanner(os.Stdin)
 	for {
 		fmt.Print("Pokedex > ")
@@ -53,7 +72,7 @@ func repl() {
 		if !ok {
 			fmt.Println("Unknown command")
 		} else {
-			err := fc.callback()
+			err := fc.callback(&config)
 			if err != nil {
 				fmt.Println(err)
 			}

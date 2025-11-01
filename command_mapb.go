@@ -1,0 +1,43 @@
+package main
+
+import (
+	"encoding/json"
+	"fmt"
+	"io"
+	"net/http"
+)
+
+func commandMapb(config *Config) error {
+	var url string
+
+	if config.Previous == "" {
+		fmt.Println("you're on the first page")
+		return nil
+	} else {
+		url = config.Previous
+	}
+
+	res, err := http.Get(url)
+	if err != nil {
+		return err
+	}
+	defer res.Body.Close()
+
+	body, err := io.ReadAll(res.Body)
+	if err != nil {
+		return err
+	}
+
+	var location Location
+	if err := json.Unmarshal(body, &location); err != nil {
+		return err
+	}
+	config.Next = location.Next
+	config.Previous = location.Previous
+
+	for _, result := range location.Results {
+		fmt.Println(result.Name)
+	}
+
+	return nil
+}
