@@ -5,10 +5,11 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+
 	"github.com/Kriss-Kolak/pokedexcli/internal/pokeapi"
 )
 
-func commandMap(config *Config) error {
+func commandMap(config *pokeapi.Config) error {
 	var url string
 
 	if config.Next == "" {

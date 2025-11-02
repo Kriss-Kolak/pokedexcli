@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"os"
 	"strings"
+
+	"github.com/Kriss-Kolak/pokedexcli/internal/pokeapi"
 )
 
 func cleanInput(text string) []string {
@@ -17,15 +19,12 @@ func cleanInput(text string) []string {
 	return splited
 }
 
-type Config struct {
-	Next     string
-	Previous string
-}
+
 
 type cliCommand struct {
 	name        string
 	description string
-	callback    func(*Config) error
+	callback    func(*pokeapi.Config) error
 }
 
 func getCommands() map[string]cliCommand {
@@ -53,7 +52,7 @@ func getCommands() map[string]cliCommand {
 	}
 }
 func repl() {
-	config := Config{
+	config := pokeapi.Config{
 		Next:     "",
 		Previous: "",
 	}

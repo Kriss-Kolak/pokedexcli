@@ -9,7 +9,7 @@ import (
 	"github.com/Kriss-Kolak/pokedexcli/internal/pokeapi"
 )
 
-func commandMapb(config *Config) error {
+func commandMapb(config *pokeapi.Config) error {
 	var url string
 
 	if config.Previous == "" {
