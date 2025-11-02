@@ -19,8 +19,6 @@ func cleanInput(text string) []string {
 	return splited
 }
 
-
-
 type cliCommand struct {
 	name        string
 	description string
@@ -42,20 +40,17 @@ func getCommands() map[string]cliCommand {
 		"map": {
 			name:        "map",
 			description: "Display next 20 locations",
-			callback:    commandMap,
+			callback:    pokeapi.CommandMapF,
 		},
 		"mapb": {
 			name:        "mapb",
 			description: "Display previous 20 locations",
-			callback:    commandMapb,
+			callback:    pokeapi.CommandMapB,
 		},
 	}
 }
 func repl() {
-	config := pokeapi.Config{
-		Next:     "",
-		Previous: "",
-	}
+	config := pokeapi.GetConfig()
 	s := bufio.NewScanner(os.Stdin)
 	for {
 		fmt.Print("Pokedex > ")
@@ -71,7 +66,7 @@ func repl() {
 		if !ok {
 			fmt.Println("Unknown command")
 		} else {
-			err := fc.callback(&config)
+			err := fc.callback(config)
 			if err != nil {
 				fmt.Println(err)
 			}

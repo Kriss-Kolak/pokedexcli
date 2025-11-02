@@ -11,13 +11,3 @@ type Results struct {
 	Name string `json:"name"`
 	Url  string `json:"url"`
 }
-
-type Config struct {
-
-	Next     string
-	Previous string
-}
-
-func get_config(){
-	
-}
