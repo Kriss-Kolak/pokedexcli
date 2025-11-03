@@ -22,7 +22,7 @@ func cleanInput(text string) []string {
 type cliCommand struct {
 	name        string
 	description string
-	callback    func(*pokeapi.Config) error
+	callback    func(*pokeapi.Config, string) error
 }
 
 func getCommands() map[string]cliCommand {
@@ -47,6 +47,11 @@ func getCommands() map[string]cliCommand {
 			description: "Display previous 20 locations",
 			callback:    pokeapi.CommandMapB,
 		},
+		"explore": {
+			name:        "explore",
+			description: "Explore location for pokemons",
+			callback:    pokeapi.GetPokemonList,
+		},
 	}
 }
 func repl() {
@@ -62,11 +67,16 @@ func repl() {
 			continue
 		}
 		command = cleaned[0]
+		var argument string = ""
+		if len(cleaned) > 1 {
+			argument = cleaned[1]
+		}
+
 		fc, ok := getCommands()[command]
 		if !ok {
 			fmt.Println("Unknown command")
 		} else {
-			err := fc.callback(config)
+			err := fc.callback(config, argument)
 			if err != nil {
 				fmt.Println(err)
 			}

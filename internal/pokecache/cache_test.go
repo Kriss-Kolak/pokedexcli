@@ -59,3 +59,17 @@ func TestReapLoop(t *testing.T) {
 		return
 	}
 }
+
+// added doubled test
+func TestAddingCache(t *testing.T) {
+	const baseTime = 5 * time.Second
+	cache := NewCache(baseTime)
+	test_key := "test_key"
+	test_data := []byte("testdata")
+	cache.Add(test_key, test_data)
+	if _, ok := cache.Get(test_key); !ok {
+		t.Errorf("expected to find key")
+		return
+	}
+
+}
