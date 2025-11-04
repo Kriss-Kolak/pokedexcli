@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"math/rand"
 )
 
 // get data from location-area endpoint (used in forward and backward map)
@@ -88,5 +89,69 @@ func GetPokemonList(config *Config, locationName string) error {
 		fmt.Printf("- %s \n", element.Pokemon.Name)
 	}
 
+	return nil
+}
+
+// Approach to catch a pokemon
+func CatchPokemon(config *Config, pokemonName string) error {
+	url := pokemonURL + "/" + pokemonName
+
+	res, err := config.Client.Get(url)
+	if err != nil {
+		return err
+	}
+	defer res.Body.Close()
+
+	body, err := io.ReadAll(res.Body)
+	if err != nil {
+		return err
+	}
+
+	var pokemon Pokemon
+	if err := json.Unmarshal(body, &pokemon); err != nil {
+		return err
+	}
+
+	fmt.Printf("Throwing a Pokeball at %s...\n", pokemon.Name)
+	throw := rand.Float32()
+	if throw >= 0.5 {
+		fmt.Printf("%s was caught!\n", pokemon.Name)
+		config.Pokemons[pokemon.Name] = pokemon
+	} else {
+		fmt.Printf("%s escaped!\n", pokemon.Name)
+	}
+
+	return nil
+}
+
+// Inspect basic stats about pokemon
+func InspectPokemon(config *Config, pokemonName string) error {
+	pokemon, ok := config.Pokemons[pokemonName]
+	if !ok {
+		fmt.Println("you have not caught that pokemon")
+		return nil
+	}
+
+	fmt.Printf("Name: %s\n", pokemon.Name)
+	fmt.Printf("Height: %d\n", pokemon.Height)
+	fmt.Printf("Weight: %d\n", pokemon.Weight)
+	fmt.Println("Stats:")
+	for _, v := range pokemon.Stats {
+		fmt.Printf("  -%s: %d\n", v.Stat.Name, v.BaseStat)
+	}
+	fmt.Println("Types:")
+	for _, v := range pokemon.Types {
+		fmt.Printf("  - %s\n", v.Type.Name)
+	}
+
+	return nil
+}
+
+// Get list of all caught pokemons
+func Pokedex(config *Config, argument string) error {
+	fmt.Println("Your Pokedex:")
+	for _, p := range config.Pokemons {
+		fmt.Printf(" - %s\n", p.Name)
+	}
 	return nil
 }
