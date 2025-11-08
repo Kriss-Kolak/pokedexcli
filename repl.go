@@ -1,13 +1,15 @@
 package main
 
 import (
-	"bufio"
+	"errors"
 	"fmt"
-	"os"
 	"strings"
 
 	"github.com/Kriss-Kolak/pokedexcli/internal/pokeapi"
+	"github.com/peterh/liner"
 )
+
+var errExit = errors.New("closing")
 
 func cleanInput(text string) []string {
 
@@ -71,12 +73,19 @@ func getCommands() map[string]cliCommand {
 }
 func repl() {
 	config := pokeapi.GetConfig()
-	s := bufio.NewScanner(os.Stdin)
+	line := liner.NewLiner()
+	defer line.Close()
+	line.SetCtrlCAborts(true)
 	for {
-		fmt.Print("Pokedex > ")
-		s.Scan()
-		userInput := s.Text()
-		cleaned := cleanInput(userInput)
+		input, err := line.Prompt("Pokedex > ")
+		if err == liner.ErrPromptAborted {
+			continue
+		}
+		if err != nil {
+			return
+		}
+		line.AppendHistory(input)
+		cleaned := cleanInput(input)
 		var command string = ""
 		if len(cleaned) == 0 {
 			continue
@@ -92,6 +101,9 @@ func repl() {
 			fmt.Println("Unknown command")
 		} else {
 			err := fc.callback(config, argument)
+			if errors.Is(err, errExit) {
+				break
+			}
 			if err != nil {
 				fmt.Println(err)
 			}
